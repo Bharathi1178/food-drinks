@@ -107,6 +107,12 @@ export default function Customers() {
 
   return (
     <div className="space-y-5">
+      {/* Page Header */}
+      <div className="pb-2 border-b border-slate-200">
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Customer Directory</h1>
+        <p className="text-xs text-slate-500 mt-0.5">Customer Database, Orders Record & Lifetime Spend History</p>
+      </div>
+
       <div>
         <button
           type="button"

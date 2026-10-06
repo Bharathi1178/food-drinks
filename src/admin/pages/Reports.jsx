@@ -47,6 +47,12 @@ export default function Reports() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
+      <div className="pb-2 border-b border-slate-200">
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Turnover & Sales Reports</h1>
+        <p className="text-xs text-slate-500 mt-0.5">Comprehensive Financial Audits, Daily Turnover & Revenue Analytics</p>
+      </div>
+
       {/* Report Category Switcher Tabs */}
       <div className="flex border-b border-slate-200">
         {[

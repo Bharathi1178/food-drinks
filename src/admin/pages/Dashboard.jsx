@@ -82,6 +82,12 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
+      <div className="pb-2 border-b border-slate-200">
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Executive Dashboard</h1>
+        <p className="text-xs text-slate-500 mt-0.5">Director Executive Control & Business Analytics</p>
+      </div>
+
       {/* 1. Summary Cards (Turnover & Business Scale) */}
       <div>
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
