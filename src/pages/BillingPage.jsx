@@ -30,8 +30,6 @@ import {
 import { usePOS } from '../context/POSContext';
 import { useCustomerAuth } from '../context/CustomerAuthContext';
 import { useSettings } from '../context/SettingsContext';
-import { productService } from '../api/services/productService';
-import { categoryService } from '../api/services/categoryService';
 import PaymentModal from '../components/pos/PaymentModal';
 
 export default function BillingPage() {
@@ -80,12 +78,6 @@ export default function BillingPage() {
   const navigate = useNavigate();
 
   const [showDiscountInput, setShowDiscountInput] = useState(false);
-  const [catalogOpen, setCatalogOpen] = useState(false);
-  const [dishSearch, setDishSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(false);
 
   // Delivery instructions options
   const instructionOptions = [
@@ -94,42 +86,6 @@ export default function BillingPage() {
     'Do not ring bell',
     'Avoid calling',
   ];
-
-  // Load products for quick adding to bill
-  useEffect(() => {
-    let isMounted = true;
-    setLoadingProducts(true);
-    Promise.all([productService.getAll(), categoryService.getAll()])
-      .then(([prods, cats]) => {
-        if (isMounted) {
-          setProducts(prods || []);
-          setCategories(cats || []);
-        }
-      })
-      .catch((err) => {
-        console.warn('Could not load products for billing page:', err);
-      })
-      .finally(() => {
-        if (isMounted) setLoadingProducts(false);
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Filter products for quick add
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchCat =
-        selectedCategory === 'all' ||
-        (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
-      const matchSearch =
-        !dishSearch ||
-        p.name.toLowerCase().includes(dishSearch.toLowerCase()) ||
-        (p.description && p.description.toLowerCase().includes(dishSearch.toLowerCase()));
-      return matchCat && matchSearch;
-    });
-  }, [products, selectedCategory, dishSearch]);
 
   const handleProceedToPay = () => {
     if (cart.length === 0) {
@@ -212,138 +168,15 @@ export default function BillingPage() {
             </button>
           )}
 
-          <button
-            onClick={() => setCatalogOpen(!catalogOpen)}
+          <Link
+            to="/menu"
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-slate-950 rounded-xl text-xs font-extrabold shadow-md transition-all shrink-0 cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5 text-slate-950" />
-            <span>{catalogOpen ? 'Hide Dish Catalog' : '+ Add Dishes to Bill'}</span>
-          </button>
+            <UtensilsCrossed className="w-3.5 h-3.5 text-slate-950" />
+            <span>Browse Menu</span>
+          </Link>
         </div>
       </div>
-
-      {/* QUICK DISH CATALOG SELECTOR (INLINE BILL CREATOR) */}
-      {(catalogOpen || cart.length === 0) && (
-        <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-5 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold">
-                <UtensilsCrossed className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-white">Add Dishes Directly to Bill</h3>
-                <p className="text-[11px] text-slate-400">
-                  {cart.length === 0
-                    ? 'Your bill is empty. Click any item below to add it immediately:'
-                    : 'Search or filter items to add to current bill:'}
-                </p>
-              </div>
-            </div>
-
-            {/* Dish Search Input */}
-            <div className="relative w-full sm:w-64">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={dishSearch}
-                onChange={(e) => setDishSearch(e.target.value)}
-                placeholder="Search food by name..."
-                className="w-full pl-9 pr-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-orange-500 placeholder:text-slate-500"
-              />
-            </div>
-          </div>
-
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
-                selectedCategory === 'all'
-                  ? 'bg-orange-500 text-slate-950 font-black'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-              }`}
-            >
-              All Items ({products.length})
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.id || c.name}
-                onClick={() => setSelectedCategory(c.name || c.id)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
-                  selectedCategory.toLowerCase() === (c.name || '').toLowerCase()
-                    ? 'bg-orange-500 text-slate-950 font-black'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                }`}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Dish Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-80 overflow-y-auto pr-1">
-            {filteredProducts.map((p) => {
-              const inCart = cart.find((item) => item.id === p.id);
-              return (
-                <div
-                  key={p.id}
-                  className="bg-slate-950 border border-slate-800/80 rounded-2xl p-2.5 flex flex-col justify-between hover:border-orange-500/50 transition-all group"
-                >
-                  <div>
-                    <img
-                      src={
-                        p.image ||
-                        'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'
-                      }
-                      alt={p.name}
-                      className="w-full h-24 object-cover rounded-xl mb-2 group-hover:scale-102 transition-transform"
-                    />
-                    <h4 className="text-xs font-bold text-white truncate" title={p.name}>
-                      {p.name}
-                    </h4>
-                    <p className="text-[10px] text-amber-400 font-extrabold mt-0.5">
-                      ₹{p.price}
-                    </p>
-                  </div>
-
-                  <div className="mt-2">
-                    {inCart ? (
-                      <div className="flex items-center justify-between bg-slate-800 rounded-xl p-1">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(p.id, inCart.quantity - 1)}
-                          className="w-5 h-5 rounded bg-slate-700 text-white flex items-center justify-center font-bold text-xs"
-                        >
-                          -
-                        </button>
-                        <span className="text-xs font-black text-amber-400">
-                          {inCart.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(p.id, inCart.quantity + 1)}
-                          className="w-5 h-5 rounded bg-orange-500 text-slate-950 flex items-center justify-center font-bold text-xs"
-                        >
-                          +
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => addToCart(p, 1)}
-                        className="w-full py-1.5 bg-orange-500/20 hover:bg-orange-500 text-orange-300 hover:text-slate-950 border border-orange-500/40 rounded-xl text-xs font-extrabold transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                      >
-                        <Plus className="w-3 h-3" />
-                        <span>Add to Bill</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* MAIN BILLING SCREEN: ORDER TYPE, RECIPIENT & BILL BREAKDOWN */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -562,8 +395,15 @@ export default function BillingPage() {
 
             {/* Dishes Items */}
             {cart.length === 0 ? (
-              <div className="py-8 text-center text-slate-400 text-xs">
-                No dishes in bill yet. Click "+ Add Dishes to Bill" above to add items.
+              <div className="py-12 text-center text-slate-400 text-xs space-y-3">
+                <p className="font-semibold text-slate-500">Your bill is currently empty.</p>
+                <Link
+                  to="/menu"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-slate-950 font-extrabold rounded-xl text-xs shadow-md transition-all cursor-pointer"
+                >
+                  <UtensilsCrossed className="w-3.5 h-3.5" />
+                  <span>Browse Menu & Add Dishes</span>
+                </Link>
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
