@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { useEmployeeAuth } from '../context/EmployeeAuthContext';
-import GlobalPortalSwitcher from '../../components/common/GlobalPortalSwitcher';
 import {
   Flame,
   LogOut,
@@ -26,9 +25,6 @@ export default function EmployeeLayout() {
 
   return (
     <div className="min-h-screen bg-[#090D17] text-slate-100 flex flex-col font-sans select-none relative overflow-x-hidden">
-      {/* Universal Connected Portals Switcher */}
-      <GlobalPortalSwitcher />
-
       {/* Background Depth & Ambient Glow Elements like Image 2 */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="fixed -right-20 top-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-br from-amber-500/10 via-orange-600/8 to-rose-600/5 rounded-full blur-[130px] pointer-events-none -z-10" />
