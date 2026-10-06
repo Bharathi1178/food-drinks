@@ -9,7 +9,6 @@ import {
   Layers,
   Boxes,
   Settings,
-  Receipt,
   LogOut,
   ShieldCheck,
   Store,
@@ -33,7 +32,6 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }) {
     { to: '/admin/products', label: 'Food Products', icon: Package },
     { to: '/admin/categories', label: 'Categories', icon: Layers },
     { to: '/admin/inventory', label: 'Inventory & Stock', icon: Boxes },
-    { to: '/admin/pos', label: 'POS Counter', icon: Receipt },
     { to: '/admin/settings', label: 'System Settings', icon: Settings },
   ];
 
