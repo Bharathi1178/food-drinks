@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import GlobalPortalSwitcher from '../common/GlobalPortalSwitcher';
 import HeldOrdersModal from '../pos/HeldOrdersModal';
 import ThermalReceipt from '../invoice/ThermalReceipt';
 import { usePOS } from '../../context/POSContext';
@@ -11,6 +12,9 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
+      {/* Universal Connected Portals Switcher */}
+      <GlobalPortalSwitcher />
+
       {/* Top Customer-Centric Sticky Navigation Bar */}
       <Header />
 

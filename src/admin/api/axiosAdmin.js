@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const ADMIN_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+export const ADMIN_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : '/api');
 
 const axiosAdmin = axios.create({
   baseURL: ADMIN_API_BASE_URL,

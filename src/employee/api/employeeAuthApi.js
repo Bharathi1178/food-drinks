@@ -1,67 +1,72 @@
 import apiClient from '../../api/axios';
 
+const BACKEND_BASE = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : null);
+
 export const employeeAuthApi = {
   login: async ({ employeeId, name, email }) => {
-    // Direct call to Django backend authentication endpoint
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/employee/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          employee_id: employeeId,
-          name,
-          email,
-        }),
-      });
+    if (BACKEND_BASE) {
+      try {
+        const response = await fetch(`${BACKEND_BASE}/employee/login/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            employee_id: employeeId,
+            name,
+            email,
+          }),
+        });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Authentication failed');
+        const data = await response.json();
+        if (response.ok) return data;
+      } catch (err) {
+        // Fallback to client adapter
       }
-      return data;
-    } catch (err) {
-      // Fallback via axios apiClient
-      const res = await apiClient.post('/employee/login/', {
-        employee_id: employeeId,
-        name,
-        email,
-      });
-      return res.data;
     }
+
+    const res = await apiClient.post('/employee/login/', {
+      employee_id: employeeId,
+      name,
+      email,
+    });
+    return res.data;
   },
 
   getOrders: async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/orders/');
-      if (response.ok) {
-        const data = await response.json();
-        return Array.isArray(data) ? data : data?.results || [];
+    if (BACKEND_BASE) {
+      try {
+        const response = await fetch(`${BACKEND_BASE}/orders/`);
+        if (response.ok) {
+          const data = await response.json();
+          return Array.isArray(data) ? data : data?.results || [];
+        }
+      } catch (e) {
+        // Fallback to client adapter
       }
-    } catch (e) {
-      console.warn('Backend orders fetch fallback:', e);
     }
+
     const res = await apiClient.get('/orders/');
     return Array.isArray(res.data) ? res.data : res.data?.results || [];
   },
 
   updateOrderStatus: async (orderId, updateData) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/orders/${orderId}/`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        // Dispatch real-time events for Customer & Admin portals
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('bitepos_order_status_change', { detail: data }));
-          window.dispatchEvent(new CustomEvent('bitepos_new_order', { detail: data }));
+    if (BACKEND_BASE) {
+      try {
+        const response = await fetch(`${BACKEND_BASE}/orders/${orderId}/`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updateData),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('bitepos_order_status_change', { detail: data }));
+            window.dispatchEvent(new CustomEvent('bitepos_new_order', { detail: data }));
+          }
+          return data;
         }
-        return data;
+      } catch (e) {
+        // Fallback to client adapter
       }
-    } catch (e) {
-      console.warn('Backend order patch fallback:', e);
     }
 
     const res = await apiClient.patch(`/orders/${orderId}/`, updateData);
@@ -73,16 +78,20 @@ export const employeeAuthApi = {
   },
 
   getRegisteredEmployees: async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/employees/');
-      if (response.ok) {
-        const data = await response.json();
-        return Array.isArray(data) ? data : data?.results || [];
+    if (BACKEND_BASE) {
+      try {
+        const response = await fetch(`${BACKEND_BASE}/employees/`);
+        if (response.ok) {
+          const data = await response.json();
+          return Array.isArray(data) ? data : data?.results || [];
+        }
+      } catch (e) {
+        // Fallback to client adapter
       }
-    } catch (e) {
-      console.warn('Backend employees fetch fallback:', e);
     }
-    return [];
+
+    const res = await apiClient.get('/employees/');
+    return Array.isArray(res.data) ? res.data : res.data?.results || [];
   },
 };
 

@@ -5,6 +5,11 @@ import {
   Users,
   Briefcase,
   BarChart3,
+  Package,
+  Layers,
+  Boxes,
+  Settings,
+  Receipt,
   LogOut,
   ShieldCheck,
   Store,
@@ -17,11 +22,19 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }) {
   const { adminUser, logout } = useAdminAuth();
   const navigate = useNavigate();
 
-  const navItems = [
+  const managementItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/customers', label: 'Customers', icon: Users },
     { to: '/admin/employees', label: 'Employees', icon: Briefcase },
     { to: '/admin/reports', label: 'Turnover Reports', icon: BarChart3 },
+  ];
+
+  const catalogItems = [
+    { to: '/admin/products', label: 'Food Products', icon: Package },
+    { to: '/admin/categories', label: 'Categories', icon: Layers },
+    { to: '/admin/inventory', label: 'Inventory & Stock', icon: Boxes },
+    { to: '/admin/pos', label: 'POS Counter', icon: Receipt },
+    { to: '/admin/settings', label: 'System Settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -52,9 +65,9 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }) {
       {/* Navigation Links */}
       <nav className="flex-1 p-3.5 space-y-1 overflow-y-auto">
         <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-          Management
+          Executive Control
         </div>
-        {navItems.map((item) => {
+        {managementItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -77,15 +90,47 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }) {
 
         <div className="pt-3 mt-3 border-t border-slate-800">
           <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            Operations
+            Catalog & System
+          </div>
+          {catalogItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onCloseMobile}
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                    isActive
+                      ? 'bg-slate-800 text-white font-semibold border-l-3 border-amber-500 shadow-xs'
+                      : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  }`
+                }
+              >
+                <Icon size={17} />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+
+        <div className="pt-3 mt-3 border-t border-slate-800 space-y-1.5">
+          <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Portals Switcher
           </div>
           <NavLink
-            to="/employee/dashboard"
-            target="_blank"
-            className="flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 border border-orange-500/20 transition-colors"
+            to="/menu"
+            className="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
           >
-            <Flame size={16} className="text-orange-500" />
-            <span>Employee Portal ↗</span>
+            <Store size={15} className="text-amber-400" />
+            <span>Storefront (Customer) ↗</span>
+          </NavLink>
+          <NavLink
+            to="/employee/dashboard"
+            className="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 border border-orange-500/20 transition-colors"
+          >
+            <Flame size={15} className="text-orange-500" />
+            <span>Kitchen Display (KDS) ↗</span>
           </NavLink>
         </div>
       </nav>

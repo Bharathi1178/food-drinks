@@ -37,7 +37,7 @@ export default function POSPage() {
       setCategories(categoryList);
     } catch (err) {
       console.error('Failed to load POS data from backend API:', err);
-      setError('Unable to load menu from backend API (http://127.0.0.1:8000/api). Please check backend connection.');
+      setError('Unable to load menu. Please check your network or server connection.');
     } finally {
       setLoading(false);
     }

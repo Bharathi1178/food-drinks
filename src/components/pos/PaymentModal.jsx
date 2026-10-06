@@ -124,6 +124,12 @@ export default function PaymentModal() {
         localStorage.setItem('bitepos_last_placed_order_id', fullCompletedOrder.id);
       }
 
+      // Real-time notification across all portals (Employees Kitchen & Admin Director)
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('bitepos_new_order', { detail: fullCompletedOrder }));
+        window.dispatchEvent(new CustomEvent('bitepos_order_status_change', { detail: fullCompletedOrder }));
+      }
+
       // Automatically sync delivery address to customer record
       if (deliveryAddress && (selectedCustomer?.phone || selectedCustomer?.name)) {
         try {

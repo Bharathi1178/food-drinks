@@ -8,6 +8,9 @@ import {
 } from './mockData';
 import { customerDB } from './customerDatabase';
 
+// Determine backend URL (local Django server if running locally, or custom env, or null for static Vercel)
+const BACKEND_BASE = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : null);
+
 // Local storage key constants
 const KEYS = {
   PRODUCTS: 'bitepos_products',
@@ -194,43 +197,45 @@ export const handleMockRequest = async (config) => {
   // --- Orders ---
   if (url === '/orders') {
     if (method.toLowerCase() === 'get') {
-      try {
-        const backendRes = await fetch('http://127.0.0.1:8000/api/orders/');
-        if (backendRes.ok) {
-          const backendData = await backendRes.json();
-          const list = Array.isArray(backendData) ? backendData : backendData?.results || [];
-          // Keep localStorage updated with real orders from database
-          const mapped = list.map((o) => ({
-            id: o.id,
-            tokenNo: o.token_no || o.tokenNo,
-            orderType: o.order_type || o.orderType || 'Delivery',
-            customerName: o.customer_name || o.customerName,
-            customerPhone: o.customer_phone || o.customerPhone,
-            items: o.items || [],
-            subtotal: Number(o.subtotal || o.grand_total || 0),
-            discount: Number(o.discount || 0),
-            tax: Number(o.tax || 0),
-            grandTotal: Number(o.grand_total || o.grandTotal || 0),
-            paymentMethod: o.payment_method || o.paymentMethod || 'Cash on Delivery',
-            paymentStatus: o.payment_status || o.paymentStatus || 'Paid',
-            status: o.status || 'Preparing',
-            deliveryAddress: o.delivery_address || o.deliveryAddress || o.address || '',
-            deliveryDistrict: o.delivery_district || o.deliveryDistrict || o.district || '',
-            deliveryArea: o.delivery_area || o.deliveryArea || o.area || '',
-            deliveryLandmark: o.delivery_landmark || o.deliveryLandmark || o.landmark || '',
-            deliveryBuildingDetails: o.delivery_building_details || o.deliveryBuildingDetails || o.buildingDetails || '',
-            deliveryInstructions: o.delivery_instructions || o.deliveryInstructions || '',
-            location: o.location || ([o.delivery_area || o.deliveryArea, o.delivery_district || o.deliveryDistrict].filter(Boolean).join(', ')),
-            date: o.date || (o.created_at ? o.created_at.split('T')[0] : new Date().toISOString().split('T')[0]),
-            time: o.time || '',
-            created_at: o.created_at,
-            createdAt: o.created_at,
-          }));
-          setStored(KEYS.ORDERS, mapped);
-          return { data: mapped, status: 200 };
+      if (BACKEND_BASE) {
+        try {
+          const backendRes = await fetch(`${BACKEND_BASE}/orders/`);
+          if (backendRes.ok) {
+            const backendData = await backendRes.json();
+            const list = Array.isArray(backendData) ? backendData : backendData?.results || [];
+            // Keep localStorage updated with real orders from database
+            const mapped = list.map((o) => ({
+              id: o.id,
+              tokenNo: o.token_no || o.tokenNo,
+              orderType: o.order_type || o.orderType || 'Delivery',
+              customerName: o.customer_name || o.customerName,
+              customerPhone: o.customer_phone || o.customerPhone,
+              items: o.items || [],
+              subtotal: Number(o.subtotal || o.grand_total || 0),
+              discount: Number(o.discount || 0),
+              tax: Number(o.tax || 0),
+              grandTotal: Number(o.grand_total || o.grandTotal || 0),
+              paymentMethod: o.payment_method || o.paymentMethod || 'Cash on Delivery',
+              paymentStatus: o.payment_status || o.paymentStatus || 'Paid',
+              status: o.status || 'Preparing',
+              deliveryAddress: o.delivery_address || o.deliveryAddress || o.address || '',
+              deliveryDistrict: o.delivery_district || o.deliveryDistrict || o.district || '',
+              deliveryArea: o.delivery_area || o.deliveryArea || o.area || '',
+              deliveryLandmark: o.delivery_landmark || o.deliveryLandmark || o.landmark || '',
+              deliveryBuildingDetails: o.delivery_building_details || o.deliveryBuildingDetails || o.buildingDetails || '',
+              deliveryInstructions: o.delivery_instructions || o.deliveryInstructions || '',
+              location: o.location || ([o.delivery_area || o.deliveryArea, o.delivery_district || o.deliveryDistrict].filter(Boolean).join(', ')),
+              date: o.date || (o.created_at ? o.created_at.split('T')[0] : new Date().toISOString().split('T')[0]),
+              time: o.time || '',
+              created_at: o.created_at,
+              createdAt: o.created_at,
+            }));
+            setStored(KEYS.ORDERS, mapped);
+            return { data: mapped, status: 200 };
+          }
+        } catch (e) {
+          // fallback to storage if backend is temporarily unreachable
         }
-      } catch (e) {
-        // fallback to storage if backend is temporarily unreachable
       }
       return { data: getStored(KEYS.ORDERS), status: 200 };
     }
@@ -240,8 +245,9 @@ export const handleMockRequest = async (config) => {
       const inventoryLogs = getStored(KEYS.INVENTORY_LOGS);
 
       let savedBackendOrder = null;
-      try {
-        const backendRes = await fetch('http://127.0.0.1:8000/api/orders/', {
+      if (BACKEND_BASE) {
+        try {
+          const backendRes = await fetch(`${BACKEND_BASE}/orders/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -279,6 +285,7 @@ export const handleMockRequest = async (config) => {
       } catch (err) {
         console.warn('Backend order creation notice:', err.message);
       }
+    }
 
       const orderCount = orders.length + 1;
       const newOrder = {
@@ -360,14 +367,16 @@ export const handleMockRequest = async (config) => {
     const index = orders.findIndex(o => o.id === id);
 
     if (method.toLowerCase() === 'patch' || method.toLowerCase() === 'put') {
-      try {
-        await fetch(`http://127.0.0.1:8000/api/orders/${id}/`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-      } catch (e) {
-        // Continue even if backend is offline
+      if (BACKEND_BASE) {
+        try {
+          await fetch(`${BACKEND_BASE}/orders/${id}/`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        } catch (e) {
+          // Continue even if backend is offline
+        }
       }
 
       if (index !== -1) {
@@ -387,16 +396,18 @@ export const handleMockRequest = async (config) => {
 
   // --- Employee Authentication & Endpoints ---
   if (url === '/employee/login' || url === '/employee/login/') {
-    try {
-      const backendRes = await fetch('http://127.0.0.1:8000/api/employee/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const resJson = await backendRes.json();
-      return { data: resJson, status: backendRes.status };
-    } catch (e) {
-      // Offline fallback
+    if (BACKEND_BASE) {
+      try {
+        const backendRes = await fetch(`${BACKEND_BASE}/employee/login/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const resJson = await backendRes.json();
+        return { data: resJson, status: backendRes.status };
+      } catch (e) {
+        // Offline fallback
+      }
     }
   }
 

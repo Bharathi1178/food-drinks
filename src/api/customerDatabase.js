@@ -1,9 +1,11 @@
 
 // Helper to sync customer record to Django backend SQLite
+const BACKEND_API = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : null);
+
 const syncToBackend = (customer) => {
   try {
-    if (!customer?.phone || customer.phone === '9999999999') return;
-    fetch('http://127.0.0.1:8000/api/customers/', {
+    if (!BACKEND_API || !customer?.phone || customer.phone === '9999999999') return;
+    fetch(`${BACKEND_API}/customers/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

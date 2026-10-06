@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import GourmetHeroSection from '../components/home/GourmetHeroSection';
 import HotDealsSection from '../components/home/HotDealsSection';
 import CustomerFavorites from '../components/home/CustomerFavorites';
@@ -20,6 +21,12 @@ import {
   X,
   Sparkles,
   SlidersHorizontal,
+  ShieldCheck,
+  Monitor,
+  Receipt,
+  Clock,
+  ArrowRight,
+  User,
 } from 'lucide-react';
 
 const MENU_TABS = [
@@ -413,6 +420,156 @@ export default function MenuPage() {
 
       {/* 7. Customer Reviews / Social Proof */}
       <CustomerReviews />
+
+      {/* 8. Enterprise Portals & Operational Modules Showcase */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-black uppercase tracking-wider mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Complete Restaurant Operating System</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Explore All BiteCraze Portals
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Seamlessly switch between customer storefront, executive business analytics, kitchen preparation display, and cashier POS billing.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Card 1: Director & Admin Portal */}
+          <Link
+            to="/admin/dashboard"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">
+                Director / Admin Portal
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Executive business dashboard, sales turnover charts, customer analytics, staff shifts, product catalog and settings.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-amber-400">
+              <span>Open Director Portal</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 2: Kitchen Display System (KDS) */}
+          <Link
+            to="/employee/dashboard"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-orange-500/50 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <Flame className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-orange-400 transition-colors">
+                Kitchen Display (KDS)
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Dedicated kitchen terminal for chefs & line cooks. Real-time ticket management, order preparation timers and dispatch.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-orange-400">
+              <span>Open Kitchen Portal</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 3: Counter POS Billing Terminal */}
+          <Link
+            to="/pos"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <Monitor className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-emerald-400 transition-colors">
+                Counter POS Terminal
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                High-speed cashier point of sale terminal. Instant product selection grid, bill holding, cash/card register & thermal printing.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+              <span>Open POS Terminal</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 4: Billing & Checkout */}
+          <Link
+            to="/billing"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-300 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <Receipt className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">
+                Billing & Checkout
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Cart management, delivery address details, promo code application, GST tax calculations, and payment completion.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-amber-400">
+              <span>Go to Billing</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 5: Live Order Tracker */}
+          <Link
+            to="/orders?view=track"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-orange-500/50 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <Clock className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-orange-400 transition-colors">
+                Orders & Live Tracker
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Animated real-time motorcycle delivery tracker with live pipeline from kitchen prep to doorstep arrival.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-orange-400">
+              <span>Track Orders</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 6: Customer Profile */}
+          <Link
+            to="/profile"
+            className="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-slate-800 text-slate-300 flex items-center justify-center font-bold mb-3 group-hover:scale-105 transition-transform">
+                <User className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-black text-white group-hover:text-slate-200 transition-colors">
+                Customer Profile
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Saved addresses, dietary preferences, order history records, loyalty tier status and account credentials.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-slate-300">
+              <span>View Profile</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+        </div>
+      </section>
 
       {/* 8. Product Details Modal with Add-ons */}
       {selectedProductForDetails && (

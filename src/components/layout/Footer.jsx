@@ -74,28 +74,28 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <a href="#about" className="hover:text-amber-400 transition-colors">
-                  About Us
-                </a>
+                <Link to="/menu" className="hover:text-amber-400 transition-colors">
+                  Food Menu
+                </Link>
               </li>
               <li>
-                <a href="#kitchens" className="hover:text-amber-400 transition-colors">
-                  Our Cloud Kitchens
-                </a>
+                <Link to="/billing" className="hover:text-amber-400 transition-colors">
+                  Billing & Checkout
+                </Link>
               </li>
               <li>
-                <a href="#careers" className="hover:text-amber-400 transition-colors">
-                  Careers & Culture
-                </a>
+                <Link to="/pos" className="hover:text-amber-400 transition-colors">
+                  Counter POS Terminal
+                </Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-amber-400 transition-colors">
-                  Contact Us
-                </a>
+                <Link to="/admin/dashboard" className="hover:text-amber-400 transition-colors">
+                  Director / Admin Portal
+                </Link>
               </li>
               <li>
-                <Link to="/admin/login" className="hover:text-amber-400 transition-colors">
-                  Director Portal
+                <Link to="/employee/dashboard" className="hover:text-amber-400 transition-colors">
+                  Kitchen Display Portal
                 </Link>
               </li>
             </ul>

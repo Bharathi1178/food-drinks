@@ -263,6 +263,8 @@ export const POSProvider = ({ children }) => {
         setDeliveryInstructions,
         deliveryOtherInstructions,
         setDeliveryOtherInstructions,
+        activeReceipt,
+        setActiveReceipt,
       }}
     >
       {children}

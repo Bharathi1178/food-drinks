@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { handleMockRequest } from './mockAdapter';
 
-export const API_BASE_URL = 'http://127.0.0.1:3000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Pure frontend client-side adapter for 100% offline & standalone reliability
 const apiClient = axios.create({
