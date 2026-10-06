@@ -17,10 +17,6 @@ import {
   X as CloseIcon,
   UtensilsCrossed,
   Receipt,
-  ShieldCheck,
-  Layers,
-  Store,
-  Monitor,
 } from 'lucide-react';
 import { usePOS } from '../../context/POSContext';
 import { useCustomerAuth } from '../../context/CustomerAuthContext';
@@ -393,7 +389,6 @@ export default function Header() {
 
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
-  const [portalsDropdownOpen, setPortalsDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Step-by-step location selection: 'district' | 'area'
@@ -407,7 +402,6 @@ export default function Header() {
 
   const dropdownRef = useRef(null);
   const locationRef = useRef(null);
-  const portalsRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -419,9 +413,6 @@ export default function Header() {
       }
       if (locationRef.current && !locationRef.current.contains(event.target)) {
         setLocationDropdownOpen(false);
-      }
-      if (portalsRef.current && !portalsRef.current.contains(event.target)) {
-        setPortalsDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -623,82 +614,6 @@ export default function Header() {
                 <span className="absolute -bottom-2.5 left-2 right-2 h-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-rose-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
               )}
             </Link>
-
-            {/* Portals Switcher Dropdown */}
-            <div className="relative ml-1" ref={portalsRef}>
-              <button
-                type="button"
-                onClick={() => setPortalsDropdownOpen(!portalsDropdownOpen)}
-                className="py-1.5 px-3 text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
-              >
-                <Layers className="w-3.5 h-3.5 text-amber-400" />
-                <span>Portals</span>
-                <ChevronDown className={`w-3 h-3 text-amber-400 transition-transform ${portalsDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {portalsDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-slate-100 backdrop-blur-md">
-                  <div className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                    Switch Portals
-                  </div>
-                  <Link
-                    to="/admin/dashboard"
-                    onClick={() => setPortalsDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-amber-300 hover:text-white hover:bg-amber-500/15 transition-colors"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                      <ShieldCheck className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="leading-tight">Director / Admin Portal</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Analytics, Revenue, Staff</div>
-                    </div>
-                  </Link>
-
-                  <Link
-                    to="/employee/dashboard"
-                    onClick={() => setPortalsDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-orange-300 hover:text-white hover:bg-orange-500/15 transition-colors"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
-                      <Flame className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="leading-tight">Kitchen KDS Portal</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Ticket Prep & Dispatch</div>
-                    </div>
-                  </Link>
-
-                  <Link
-                    to="/pos"
-                    onClick={() => setPortalsDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-emerald-300 hover:text-white hover:bg-emerald-500/15 transition-colors border-t border-slate-800"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                      <Monitor className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="leading-tight">Counter POS Billing</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Quick In-Store Cashier</div>
-                    </div>
-                  </Link>
-
-                  <Link
-                    to="/profile"
-                    onClick={() => setPortalsDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors border-t border-slate-800"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center shrink-0">
-                      <User className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="leading-tight">Customer Profile</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Addresses & Loyalty</div>
-                    </div>
-                  </Link>
-                </div>
-              )}
-            </div>
           </nav>
 
         {/* 3. Right: Location, Cart & User Profile */}
@@ -1090,36 +1005,6 @@ export default function Header() {
             <Clock className="w-4 h-4 text-orange-400" />
             <span>Track Order</span>
           </Link>
-
-          <div className="pt-2 border-t border-slate-800/80 space-y-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 px-3.5 block">
-              Business & Kitchen Portals
-            </span>
-            <Link
-              to="/admin/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-amber-400 hover:bg-amber-500/10 transition-colors"
-            >
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>Director / Admin Portal</span>
-            </Link>
-            <Link
-              to="/employee/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-orange-400 hover:bg-orange-500/10 transition-colors"
-            >
-              <Flame className="w-4 h-4 text-orange-400" />
-              <span>Kitchen Display (KDS)</span>
-            </Link>
-            <Link
-              to="/pos"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-            >
-              <Monitor className="w-4 h-4 text-emerald-400" />
-              <span>Counter POS Terminal</span>
-            </Link>
-          </div>
 
           {/* Mobile Location Action */}
           <button
